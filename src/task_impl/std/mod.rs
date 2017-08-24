@@ -237,6 +237,8 @@ impl<F: Future> Spawn<F> {
     /// This function will call `poll_future` in a loop, waiting for the future
     /// to complete. When a future cannot make progress it will use
     /// `thread::park` to block the current thread.
+    #[deprecated(note = "use `current_thread::block_until`")]
+    #[doc(hidden)]
     pub fn wait_future(&mut self) -> Result<F::Item, F::Error> {
         let unpark = Arc::new(ThreadUnpark::new(thread::current()));
 
@@ -295,6 +297,8 @@ impl<S: Stream> Spawn<S> {
 
     /// Like `wait_future`, except only waits for the next element to arrive on
     /// the underlying stream.
+    #[deprecated(note = "use `current_thread::BlockingStream`")]
+    #[doc(hidden)]
     pub fn wait_stream(&mut self) -> Option<Result<S::Item, S::Error>> {
         let unpark = Arc::new(ThreadUnpark::new(thread::current()));
         loop {
@@ -338,6 +342,8 @@ impl<S: Sink> Spawn<S> {
     /// This function will send the `value` on the sink that this task wraps. If
     /// the sink is not ready to send the value yet then the current thread will
     /// be blocked until it's able to send the value.
+    #[deprecated(note = "use `current_thread::BlockingSink`")]
+    #[doc(hidden)]
     pub fn wait_send(&mut self, mut value: S::SinkItem)
                      -> Result<(), S::SinkError> {
         let notify = Arc::new(ThreadUnpark::new(thread::current()));
@@ -358,6 +364,8 @@ impl<S: Sink> Spawn<S> {
     ///
     /// The thread will be blocked until `poll_complete` returns that it's
     /// ready.
+    #[deprecated(note = "use `current_thread::BlockingSink`")]
+    #[doc(hidden)]
     pub fn wait_flush(&mut self) -> Result<(), S::SinkError> {
         let notify = Arc::new(ThreadUnpark::new(thread::current()));
         loop {
@@ -373,6 +381,8 @@ impl<S: Sink> Spawn<S> {
     /// This function will close the sink that this task wraps. If the sink
     /// is not ready to be close yet, then the current thread will be blocked
     /// until it's closed.
+    #[deprecated(note = "use `current_thread::BlockingSink`")]
+    #[doc(hidden)]
     pub fn wait_close(&mut self) -> Result<(), S::SinkError> {
         let notify = Arc::new(ThreadUnpark::new(thread::current()));
         loop {
